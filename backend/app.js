@@ -9,6 +9,19 @@ const cors = require('cors');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 
+const db = require("./db/models")
+
+async function check() {
+    try {
+        await db.sequelize.authenticate()
+        console.log("yessssssssss")
+    } catch (error) {
+        console.log("nooooooooooooo", error)
+    }
+}
+
+check()
+
 const PORT = 3000;
 
 const sessionConfig = {
@@ -23,6 +36,8 @@ const sessionConfig = {
     },
 };
 
+const mainRoutes = require('./src/routes/mainRoutes');
+
 app.use(express.static(path.resolve('public')));
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
@@ -32,6 +47,9 @@ app.use(cors({
     origin: true,
     credentials: true }
 ));
+
+
+app.use("/", mainRoutes)
 
 app.listen(PORT, () => {
     console.log(`Сервер крутится на ${PORT} порту!`);
